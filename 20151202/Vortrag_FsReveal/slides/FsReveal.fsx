@@ -129,200 +129,31 @@ printf "result'' = %A " result''
 ' Fehlnde Fälle werden vom Compiler festgestellt und angezeigt
 
 ---
+### Tuple: Nutzung in der .net API
 
-(**
-
-
-
----
-
-***
-  
-### Funktionale Sprachen: kein Trend
-
-- Imperative (Fortran, Cobol) 50er Jahre
-- Funktionale (Lisp) 50er Jahre
-- Objektorientierte (Smalltalk, Java, C#) 70er Jahre
-
-' In einer Industrie voller trends!
-' F# ist eine Sprache in der ML Familie
-
-*** 
-
-### Funktionale Ideen
-
-- Trennung von Daten und Verhalten
-- Funktionen sind normale Typen, können als Eingabe, Ausgabe verwendet werden
-- Kompsition: light-weight Typen verbinden zu neuen composite-types
-- Immutability: Keine Variablen sondern Ausdrucke
-
-' Manche dieser Ideen werden auch in anderen Sprachen gepflegt, z.B. Immutability. 
-
-***
-    
-### Funktionales C#
-
-- C# 3.0 führt funktionale Elemente ein: Lambdas und Linq
-- Func<> als Parameter verwenden (Strategy Pattern)
-- Immutability macht das code verständlich
-    
-' Alle Bibliotheken aus .net stehen zur Verfügung
-' Feststellung: funktionale Konstrukte können Code vereinfachen, noch mehr wenn der Syntax dies unterstützt
-' Warum dann nicht F# probieren? DAS ORIGINAL!ss
-
-***
-
-### F# 
-
-- Functions as first-class elements
-- Immutable per default
-- Algebraic Data Types
-- Functional-first
-
-' Function-first heißt mir stehen alle Elemente der OO aus .net zur Verfügung, kann APIs erstellen die von C#/VB.NET aus angesprochen werden können
-' Mutability erfodert anpassungen, ist also möglich
-' Funktionen müssen nicht als delegates definiert werden
-' Die ADT werden wir heute untersuchen
-' ADT's in F# können aber auch Verhalten haben, es ja auch eine functional first Sprache!
-
-***
-
-### Syntax Highlighting
-
-#### F# (with tooltips)
+TryParse Methoden die zwei Werte zurückgeben
+- bool: War das Parsen erfolgreich?
+- Wert: falls das Parsen erfolgreich war
 
 *)
-let a = 5
-let factorial x = [1..x] |> List.reduce (*)
-let c = factorial a
-(**
-`c` is evaluated for you
-*)
-(*** include-value: c ***)
-(**
 
----
+open System
+let showParseResult result = 
+    match result with
+    | true,value -> sprintf "Value parsed is %s" (value.ToString())
+    | false,_ -> "Value couldn't be parsed" 
 
-#### More F#
-
-*)
-[<Measure>] type sqft
-[<Measure>] type dollar
-let sizes = [|1700<sqft>;2100<sqft>;1900<sqft>;1300<sqft>|]
-let prices = [|53000<dollar>;44000<dollar>;59000<dollar>;82000<dollar>|]
-(**
-
-#### `prices.[0]/sizes.[0]`
-
-*)
-(*** include-value: prices.[0]/sizes.[0] ***)
-(**
-
----
-
-#### C#
-
-    [lang=cs]
-    using System;
+let tryParseResult = Int32.TryParse "Keine Zahl" |> showParseResult
+let tryParseResult' = Int32.TryParse "1" |> showParseResult
 
 
-    class Program
-    {
-        static void Main()
-        {
-            Console.WriteLine("Hello, world!");
-        }
-    }
+(** <div style="display: none" > *)
+(*** define-output:Tuple-TryParsePatternMatching ***)
+printf "result = %A | " tryParseResult 
+printf "result' = %A" tryParseResult'
+(** </div> *)
+
+(*** include-output: Tuple-TryParsePatternMatching ***)
 
 
----
 
-#### JavaScript
-
-    [lang=js]
-    function copyWithEvaluation(iElem, elem) {
-      return function (obj) {
-          var newObj = {};
-          for (var p in obj) {
-              var v = obj[p];
-              if (typeof v === "function") {
-                  v = v(iElem, elem);
-              }
-              newObj[p] = v;
-          }
-          if (!newObj.exactTiming) {
-              newObj.delay += exports._libraryDelay;
-          }
-          return newObj;
-      };
-    }
-
----
-
-#### Haskell
-
-    [lang=haskell]
-    recur_count k = 1 : 1 : zipWith recurAdd (recur_count k) (tail (recur_count k))
-            where recurAdd x y = k * x + y
-
-    main = do
-      argv <- getArgs
-      inputFile <- openFile (head argv) ReadMode
-      line <- hGetLine inputFile
-      let [n,k] = map read (words line)
-      printf "%d\n" ((recur_count k) !! (n-1))
-
-
-*code from [NashFP/rosalind](https://github.com/NashFP/rosalind/blob/master/mark_wutka%2Bhaskell/FIB/fib_ziplist.hs)*
-
----
-
-### SQL
-
-    [lang=sql]
-    select *
-    from
-      (select 1 as Id union all select 2 union all select 3) as X
-    where Id in (@Ids1, @Ids2, @Ids3)
-
-*sql from [Dapper](https://code.google.com/p/dapper-dot-net/)*
-
-***
-
-**Bayes' Rule in LaTeX**
-
-$ \Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)} $
-
-***
-
-### The Reality of a Developer's Life
-
-**When I show my boss that I've fixed a bug:**
-
-![When I show my boss that I've fixed a bug](http://www.topito.com/wp-content/uploads/2013/01/code-07.gif)
-
-**When your regular expression returns what you expect:**
-
-![When your regular expression returns what you expect](http://www.topito.com/wp-content/uploads/2013/01/code-03.gif)
-
-*from [The Reality of a Developer's Life - in GIFs, Of Course](http://server.dzone.com/articles/reality-developers-life-gifs)*
-
-***
-- data-background : images/fsharp128.png
-- data-background-repeat : repeat
-- data-background-size : 100px
-
-### Slides Properties
-
-- http://fsprojects.github.io/FsReveal/formatting.html#Slide-properties
-
-***
-
-### Speaker Notes
-
-- Press `s` to see a speaker note
-
-' this is a speaker note
-' and here we have another one
-
-*)
