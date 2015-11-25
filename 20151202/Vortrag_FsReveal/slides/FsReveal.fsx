@@ -299,3 +299,125 @@ printf "r''' = %s " r'''
 (*** include-output: Record-PatternMatching ***)
 (*** include-output: Record-PatternMatching0 ***)
 
+(**
+
+***
+### Discriminated Union
+
+- Unterscheidungs-Union auf deutsch
+- Besteht aus einer Anzahl von benannten Fällen
+- Ein benannter Fall kann aus einer Anzahl von Werten bestehen
+- Nur eines der bennanten Fällt ist gültig für einen Ausdruck
+- Mit Bezeichnern oder ohne
+
+*)
+
+type Shape =
+| Viereck of width : float * length : float
+| Kreis of radius : float
+
+(**
+' Ausdrucke sind immutable, ändert sich der Wert nicht.  Bitte nicht mit einem Variant (vb.net) verwechseln
+' DU ist das ganze.  Die einzelnen möglichen Werte heißen Union Case
+' Single Case gibt es auch und sind sehr schön im DDD
+
+
+---
+### DU: Deklaration
+
+- Empty Case, ist nur ein Bezeichner, keine Daten. 
+- Komposition: Record definieren und als union case verwenden
+
+' Empty case kann sehr hilfreich sein, z.B. bei DDD
+
+*)
+
+type DuBeispiel =
+| Leer
+| Complex of ComplexNumber
+| Coordinate of GeoCoord
+
+(**
+
+---
+#### DU: Construction
+
+Für jeden Union Case gibt es eine Constructor Funktion
+
+*)
+
+let viereck = Viereck(length = 1.3, width = 10.0) // ACHTUNG, Welchen Typ hat rect?
+let kreis = Kreis (1.0)
+
+(**
+
+---
+### DU: Deconstruction & Pattern Matching
+
+- rect im Beispiel hatte den Type Shape, nicht Shape.Rectangle!
+- Ich kann von außen nicht wissen welche union case ein DU-Wert darstellt
+- Nur Pattern Matching erlaubt es mir dies zu erfahren
+- Deconstruction *muss* für *alle* Fälle erfolgen (Exhaustivness)
+
+' Wenn ich einen DU anspreche dann entweder um eine Transforation zu erhalten (Fläche Ermitteln) oder um 
+
+---
+### DU: Deconstruction & Pattern Matching
+
+*)
+
+let flaeche s = 
+    match s with 
+    | Viereck (w,l) -> w*l
+    | Kreis(r) -> Math.PI*(r ** 2.0) 
+    // einen union case auszulassen verursacht einen Compiler Fehler 
+
+let kreisFlaeche   = flaeche (Kreis (5.0))
+let viereckFlaeche = Viereck(length = 5.0, width = 5.0) |> flaeche
+
+
+(** <div style="display: none" > *)
+(*** define-output:DU-PatternMatching ***)
+printf "Kreisfläche = %f | " kreisFlaeche
+printf "Viereckfläche = %f" viereckFlaeche
+(** </div> *)
+(*** include-output: DU-PatternMatching ***)
+
+(**
+
+--- 
+### DU: Nutzung
+
+- DU für die Darstellung von Zuständen/Übergängen
+- Alle Fälle abgedecken führt zu wengier Fehlerfälle
+- Schnell erstellt!
+
+---
+### DU: Single Case
+
+- Primitives haben oft besondere Bedeutung
+- Höhengrad und Breitengrad sind beide floats
+- Beide werte jedoch stellen einen anderen Domain dar
+
+' In DDD (Domain Driven Design) spielen diese oft eine wichtige Rolle.  
+' Z.B. kann ich dadurch Primitives so definieren dass diese untereinander nicht „kompatibel“ sind, auch wenn diese vom gleichen Typ sind.
+
+*)
+
+// Erste Longitude ist der Name des Typs
+// Zweite ist der Name des Constructors
+// Müssen nicht identisch sein!
+type Longitude = Longitude of float 
+type Latitude = Latitude of float
+
+let longitude = Longitude(9.993009567260742)
+let latitude  = Latitude(53.553260805869805)
+
+// Der Compiler mag das nicht, es handelt sich um zwei Typen
+// let gleich = longitude = latitude 
+
+
+
+
+
+
