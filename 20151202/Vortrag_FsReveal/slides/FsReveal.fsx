@@ -416,8 +416,139 @@ let latitude  = Latitude(53.553260805869805)
 // Der Compiler mag das nicht, es handelt sich um zwei Typen
 // let gleich = longitude = latitude 
 
+(**
+
+***
+### Option
+
+- Ist eine besondere Form des DU
+- Zu finden in vielen funktionalen Sprachen
+
+' In Haskel heißt dieser Typ Maybe, Just, Nothing. in Scala heißt es auch option, some, none.
+
+*)
+
+type Option<'a> = // DU mit generischem Parameter
+| Some of 'a // Gültiger Wert
+| None // ???
 
 
+(**
+
+---
+### Option: Construction
+
+*)
+
+let s = Some "string"
+
+(**
+
+- Achtung: None wird nicht via Construction erstellt, sondern nur als Rückgabe Wert verwendet
+
+---
+### Option: Deconstruction und Pattern Matching
+
+- Alle Fälle müssen behandelt werden damit ich den Wert des Option extrahieren kann
+
+*)
+
+let optionMatch s = 
+    match s with 
+    | Some wert -> sprintf "Wert ist %s" wert
+    | None -> ""
+
+let z  = optionMatch (Some("Hello"))
+// Das nicht idiomatisch, nur für Demonstrationszwecke
+let z' = optionMatch Option<string>.None
+
+(**
+
+---
+### Option: Deconstruction und Pattern Matching
+- Option ist meistens das Ergebnis einer Auswertung
+- None stellt den Fall dar dass kein sinnvolles Ergebnis vorhanden ist
+
+*)
+
+let matchForOption s = 
+    match s with 
+    | "Jawohl" -> Some(s)
+    | _ -> None
+
+let x  = matchForOption "Jawohl"
+let x' = matchForOption "Doch nicht"
+
+(** <div style="display: none" > *)
+(*** define-output:Option-Deconstruction ***)
+printf "x = %A | x' = %A" x x'
+(** </div> *)
+
+(*** include-output: Option-Deconstruction ***)
+
+
+(**
+
+---
+### Option: Nutzung
+
+- Null vs Unbekannt/Fehlend
+- Durch Option ist es möglich fehlende Werte explizit zu kennzeichnen
+- Die Kennzeichnung erfolgt durch einen eignen Typ
+- Zugriffe auf fehlende Werte sind dann compile-time und keine run-time Fehler
+
+' Referenzen auf nicht vorhandene Objekte sind nicht die beste Artundweise 
+
+
+---
+
+### Option vs null: Type Safety
+
+- null ist eine Reference zu einem Objekt das nicht existiert
+- Das Typsystem kann uns dabei nicht helfen zu erkennen dass die Variable diesen Wert hat
+- Ich kann .Length auf einen Reference null aufrufen
+
+' Danke Scott Wlaschin!
+
+*)
+
+(**
+
+    [lang=cs]
+    using System;
+    class Program
+    {
+        static void Main()
+        {
+            string s2 = null;
+            var len2 = s2.Length; 
+            // WIR wissen dass s2 null ist, der Compiler nicht
+        }
+    }
+
+*)
+
+(**
+
+---
+### Option vs null: Type Safety
+
+- Das gleiche in F# verursacht einen Compile Fehler
+
+*)
+
+let none = Option<string>.None
+// let length = none.Length // None hat keinen Length, es ist nämlich kein String!
+
+(**
+
+---
+### Option vs nullable
+- Nullable gilt nur für Werttypen, keine Referenztypen
+- Option verfügt in F# über viele Hilfsfunktionen 
+
+
+*)
 
 
 
