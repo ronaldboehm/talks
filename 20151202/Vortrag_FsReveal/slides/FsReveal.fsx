@@ -547,8 +547,189 @@ let none = Option<string>.None
 - Nullable gilt nur für Werttypen, keine Referenztypen
 - Option verfügt in F# über viele Hilfsfunktionen 
 
+***
+### DDD und F#
+#### Was bis her geschah
+
+- Design Prozesse gehen von einer Dreiteilung
+    - Fachleute mit Fachwissen
+    - Modellierer erstellen Design Dokumente in einem Zwischenformat (z.B. UML)
+    - Programmierer erstellen Code anhand der Design Dokumente
+
+- Konsequenzen
+    - Programmierer reden nicht mit Fachleute
+    - Roundtrip Engineering notwendig um Code und Design Dokumente auf einem Stand zu halten
+    - Code kann nicht so dargestellt werden dass Fachleute es einsehen können
+    
+' Ohne dass sie kotzen
+    
+---
+### DDD und F#
+#### Die Hoffnung
+
+- Design Dokumente die verifizierbar sind
+    - Verifizierbar durch einsehen
+    - Verifizierbar durch eine Maschine (Compiler)
+
+- Code als Design Dokument
+    - Das Code ist das Model: Keine Zwischenformate
+    - Datenstrukturen und Verhalten 
+    - Einbetten von Domainlogik in den Datenstrukturen
+    - "Making illegal states unrepresentable" (Y. Minsky)
+
+' In FP sind sowohl Datenstrukturen (Tuple, Record, DU) als Verhalten (Function) Types.  Ich kann beides gleichermaßen definieren
+  
+---
+### DDD und F#
+#### Vorteile des F# Typ System
+
+- Komposition wird durch das Typ System begünstigt
+- DU erlauben eine kompakte Darstellung von Zuständen
+- Light-weight Typen durch geringe Anzahl der Zeilen, Keine Sonderzeichen. 
+- Exhaustivness hilft bei der Korrektheit: Fehlende Fälle werden vom Compiler erfasst
+- "A good static type system is like having compile-time unit tests" (S. Wlaschin)
+
+
+' In C# oder in Java, ist die Hemmschwelle relativ hoch neue Types zu erstellen.
+' Komposition erlaubt es einfachen Typen zu immer komplexeren zusammenzufassen.  Es ist erstaunlich wie viel dann auf einer Seite passt
+' Macht Nicht Programmierern weniger Angst
+
+--- 
+### DDD und F#
+
+- Beispiele in den kommenden Seiten stammen aus 
+    - fsharpforfunandprofit
+    - Jane Street (kein F#, OCaml)
+
+--- 
+### DDD und F#
+#### Komposition
+
+- FP Typen machen Komposition einfach
+- DUs erlauben eine "geschlossene" Auswahl
 
 *)
+
+type PersonalName = { FirstName:string; LastName:string; }
+type Person = { Id:int; Name:PersonalName }
+type Department = { Name:string; Description:string; }
+type Customer = { Id:int; Name:string; }
+
+type PersonInOurDb = 
+    | Employee of Person:Person * Department: Department
+    | External of Person:Person * Customer:Customer
+
+(**
+
+---
+### DDD und F#
+- Model für einen Namen
+
+' In OO wäre es möglich dass MiddleName ein null wäre. Das ist zulässig und idiomatisch.
+' Aber wir wir gesehen haben, wäre es auch möglich Length gegen einen null pointer vom Type String zu verwenden
+' dies kann ich verhindern in dem ich die Option nutze
+
+*)
+
+module DDD0 = 
+
+    type PersonalName = 
+        { 
+            FirstName:string; // Muss
+            MiddleName:string; // Kann
+            LastName:string; // Muss
+        }
+
+(**
+
+---
+### DDD und F#
+#### Model für einen Namen
+
+*)
+
+module DDD1 = 
+
+    type PersonalName = 
+        { 
+            FirstName:string; // Muss
+            MiddleName:string option; // Kann
+            LastName:string; // Muss
+        }
+
+(**
+
+---
+### DDD und F#
+#### Model für eine Email/Telefonenummer/Kundennummer etc.
+
+' Single Case union bedeutet dass ich einen eignen Type für Emails reserviere.  Funktionen/Datenstrukture die eine Email brauchen, können dies jetzt mittels der Typdeklaration kundtun. Ich trenne so "normale" von Emails.  
+
+*)
+    // single case union
+    type Email = Email of string
+    type PhoneNumber = PhoneNumber of string
+    type CustomerNumber = CustomerNumber of string
+
+(**
+
+--- 
+### DDD und F#
+#### Kontakt
+
+- Zusammenhängende Informationen als Primitives dargestellt
+- Daten die fehlen darf als option dargestellt
+
+*)
+
+    type Contact = {
+        FirstName:string
+        MiddleInitial:string
+        LastName:string
+        EmailAdresse:string
+        IsEmailVerified:bool
+        EmailVerificationToken:string }
+
+    type Contact' = {
+        Name: PersonalName
+        Email:Email
+        IsEmailVerified:bool
+        EmailVerificationToken:string
+    }
+
+(**
+
+---
+### DDD und F#
+#### Model für eine verifizierte Email
+
+- Wenn ein neuer Kunde eine Email eingibt, dann muss diese oft erst verifiziert werden
+- Bis zu dieser Verifizierung, handelt es sich um eine nicht verifizierte Email
+- Erst nach der Verifizierung, wird daraus eine verfizierte Email (der Beweis ist ein Token)
+- Die beiden Zustände einer Email als DU modelieren
+
+*)
+    type EmailVerificationToken = EmailVerificationToken of string
+
+    type EmailContactInfo = 
+        | Unverified of Email
+        | Verified of Email:Email * VerificationToken : EmailVerificationToken
+
+(**
+
+--- 
+### DDD und F#
+#### Model für einen verifizierten Kunden
+
+*)
+
+    type Contact'' = {
+        Name: PersonalName
+        EmailContactInfo:EmailContactInfo
+    }
+
+
+
 
 
 
