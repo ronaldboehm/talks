@@ -171,11 +171,11 @@ printf "result' = %A" tryParseResult'
 
 Eine bennante Menge von benannten Elementen
 
-- Müssen nicht vom gleichen Typ sein
 - Die Reihenfolge der Deklaration ist nicht relevant
 - Ist kein ad-hoc Typ
 
 ' Wichitg: es ist auch nur ein Tuple, ein multiplication type
+
 
 ---
 ### Record: Deklaration
@@ -294,7 +294,7 @@ let r''' = matchRecord { Real = 3.0; Imaginary = 3.0; }
 printf "r = %s | " r
 printf "r' = %s" r'
 (*** define-output:Record-PatternMatching0 ***)
-printf "r'' = %s |" r''
+printf "r'' = %s | " r''
 printf "r''' = %s " r'''
 (** </div> *)
 (*** include-output: Record-PatternMatching ***)
@@ -313,12 +313,14 @@ printf "r''' = %s " r'''
 
 *)
 
-type Shape =
+type Figur =
 | Viereck of width : float * length : float
 | Kreis of radius : float
 
 (**
-' Ausdrucke sind immutable, ändert sich der Wert nicht.  Bitte nicht mit einem Variant (vb.net) verwechseln
+
+' Ausdrucke sind immutable, ändert sich der Wert nicht.  Es sieht ein bisschen wie ein Enum ist es aber nicht
+' Ich kann einen Enum mit DU definieren, die Interoperability mit C# wäre aber dahin.  Dafür muss ich den .net Typ verwenden
 ' DU ist das ganze.  Die einzelnen möglichen Werte heißen Union Case
 ' Single Case gibt es auch und sind sehr schön im DDD
 
@@ -347,7 +349,7 @@ Für jeden Union Case gibt es eine Constructor Funktion
 
 *)
 
-let viereck = Viereck(length = 1.3, width = 10.0) // ACHTUNG, Welchen Typ hat rect?
+let viereck = Viereck(length = 1.3, width = 10.0) // ACHTUNG, Welchen Typ hat viereck?
 let kreis = Kreis (1.0)
 
 (**
@@ -355,7 +357,7 @@ let kreis = Kreis (1.0)
 ---
 ### DU: Deconstruction & Pattern Matching
 
-- rect im Beispiel hatte den Type Shape, nicht Shape.Rectangle!
+- viereck im Beispiel hatte den Type Figur, nicht Figur.Viereck!
 - Ich kann von außen nicht wissen welche union case ein DU-Wert darstellt
 - Nur Pattern Matching erlaubt es mir dies zu erfahren
 - Deconstruction *muss* für *alle* Fälle erfolgen (Exhaustivness)
@@ -390,7 +392,7 @@ printf "Viereckfläche = %f" viereckFlaeche
 ### DU: Nutzung
 
 - DU für die Darstellung von Zuständen/Übergängen
-- Alle Fälle abgedecken führt zu wengier Fehlerfälle
+- Alle Fälle abdecken zu müssen führt zu wengier Fehlerfälle
 - Schnell erstellt!
 
 ---
@@ -612,10 +614,11 @@ let none = Option<string>.None
 #### Vorteile des F# Typ System
 
 - Light-weight Typen: geringe Anzahl der Zeilen, Keine Sonderzeichen
-- Exhaustivness führt zur Korrektheit: Fehlende Fälle werden vom Compiler erfasst
+- Exhaustivness führt zur Korrektheit
 
 
 ' - Die geringe Zahl von Sonderzeichen/Schlüsselwörtern macht Nicht Programmierern weniger Angst
+' PUNKT 2: Fehlende Fälle werden vom Compiler erfasst
 ' - Bei Programmierung von Fachanwendungen, geht es oft darum dass ein Objekt mehrere Zustände haben kann.  Jedes Zustand hat wiederum eigne Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
 
 --- 
@@ -726,6 +729,7 @@ type Person' =
 ' Emails sind halt keine strings.
 
 *)
+
 // single case union
 type Email = Email of string
 type Telefon = PhoneNumber of string
@@ -736,10 +740,9 @@ type Kundennummer = CustomerNumber of string
 --- 
 ### DDD und F#
 #### Zustände
-
-- Zusammenhängende Informationen in Types zusammenfassen
-- Zustände mittels Typen darstellen
-
+- Typ System hilft
+    - Zusammenhängende Informationen zusammenfassen
+    - Zustände darstellen
 
 *)
 
@@ -770,6 +773,7 @@ module DDD0 =
             "???"
         else
             "Ja das darf der Kotakt"
+
 
 (**
 
@@ -817,8 +821,6 @@ module DDD0 =
 ---
 ### DDD und F#
 #### Model für einen Kunden mit Adressen
-
-
 
 
 ' Das Pattern matching schränkt die Auswahl auf konkrete Typen und nicht mehr auf das abfragen von einzelnen Werten
