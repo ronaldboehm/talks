@@ -27,9 +27,9 @@ Eine Menge von Elementen
 ---
 ### Tuple: Construction
 
-- Kann beliebig viele Elemente beinhalten                    
-- Construction erolgt mittels Komma (mit und ohne Klammern)  
-- Multiplikation von (mindestens) zwei Domains: Kartesiche Summe 
+- Kann beliebig viele Elemente beinhalten
+- Construction erolgt mittels Komma (mit und ohne Klammern)
+- Multiplikation von (mindestens) zwei Domains: Kartesiche Summe
 
 *)
 
@@ -625,18 +625,63 @@ let none = Option<string>.None
     - fsharpforfunandprofit
     - Jane Street (kein F#, OCaml)
 
+---
+### DDD und F#
+#### Mehr Zustände
+
+*)
+
+type ConnectionState = Connecting | Connected | Disconnected
+ 
+type ConnectionInfo = { 
+    State: ConnectionState; 
+    Server: System.Net.IPAddress; 
+    LastPingTime: DateTime option; 
+    LastPingId: int option; 
+    SessionId: string option; 
+    WhenInitiated: DateTime option; 
+    WhenDisconnected: DateTime option; 
+} 
+
+(**
+
+---
+### DDD und F#
+#### Mehr Zustände
+
+*)
+
+type Connecting = { WhenInitiated: DateTime; }
+
+type Connected = { LastPing : DateTime * int; SessionId: string; }
+
+type Disconnected = { WhenDisconnected: DateTime; }
+
+type ConnectionInfo' =
+    | Connecting of Connecting
+    | Connected of Connected
+    | Disconnected of Disconnected
+
+(**
+
 --- 
 ### DDD und F#
 #### Intern ODER extern
 *)
 
 type Abteilung = { Name:string; Beschreibung:string; }
+
 type Kunde = { Id:int; Name:string; }
 
-type Person' = { Id:int; Vorname:string; Nachname:string; Abteilung: Abteilung option; Kunde: Kunde option; }
+type Person = { Id:int; 
+                Vorname:string; 
+                Nachname:string; 
+                Abteilung: Abteilung option; 
+                Kunde: Kunde option; }
 
 (**
-' Theoretisch, hindert mich nichts daran sowohl Department und Customer leer zu lassen.  Ich muss aktiv über mein Code eingreifen um zu sichern dass mindestens eines der beiden belegt ist
+' Theoretisch, hindert mich nichts daran sowohl Department und Customer leer zu lassen. Construktoren und Scope sind die Optionen die ich habe.  Aber es ist nicht erkennbar
+' Ich muss aktiv über mein Code eingreifen um zu sichern dass mindestens eines der beiden belegt ist
 ' Nachnamen und Vornamen sind häufig gemeinsam anzutreffen, die Beiden werden meistens als einheit betrachtet
 ' Notfalls muss eine ReadOnly Property erstellen um herauszufinden dass eine Person intern oder extern ist
 ' Diese Property muss immer z.B. aufgerufen werden um sich zu vergewissern 
@@ -650,112 +695,106 @@ type Person' = { Id:int; Vorname:string; Nachname:string; Abteilung: Abteilung o
 
 *)
 
-type PersonenName = { Vorname:string; Nachname:string; }
-//type Person = { Id:int; Name:PersonalName }
+type PersonenName = { Titel: string option; Vorname:string; Nachname:string; }
 
-type Person = 
-    | Angestellter of Id:int * Name:PersonenName * Department: Abteilung
-    | Externer of Id:int * Name:PersonenName * Customer:Kunde
+type Angestellter = { Id:int; Name:PersonenName; Department: Abteilung;}
 
-(**
+type Externer = { Id:int; Name:PersonenName; Customer:Kunde;}
 
-' Wenn ich ab jetzt nur noch mit 
-
----
-### DDD und F#
-- Model für einen Namen
-
-' In OO wäre es möglich dass MiddleName ein null wäre. Das ist zulässig und idiomatisch.
-' Aber wie wir gesehen haben, wäre es auch möglich Length gegen einen null pointer vom Type String zu verwenden
-' dies kann ich verhindern in dem ich die Option nutze, hier muss der String angegeben werden (wenn auch Empty auch möglich wäre)
-
-*)
-
-module DDD0 = 
-
-    type PersonenName = 
-        { 
-            FirstName:string; // Muss
-            MiddleName:string; // Kann
-            LastName:string; // Muss
-        }
+type Person' = 
+    | Angestellter of Angestellter
+    | Externer of Externer
 
 (**
 
----
-### DDD und F#
-#### Model für einen Namen
-
-*)
-
-module DDD1 = 
-
-    type PersonalName = 
-        { 
-            FirstName:string; // Muss
-            MiddleName:string option; // Kann
-            LastName:string; // Muss
-        }
-
-(**
+' - ACHTUNG: string kann nicht mit nullable kombiniert werden, da diese nur Werttypen unterstützt
+' - Ein ORM hätte an der Stelle den Wert null gewählt als mapping
+' - string option hingegen erlaubt den Verzicht auf null, bei Einhaltung der 
+' Bedenken: Ich habe weiterhin nur einen Typ für Person, keine zwei.  Nur bei jedem Zugriff auf Person, muss ich jetzt beide Fälle explizit berücksichtigen
+' Operationen die nur vom Angestellten/Externen ausgeführt werden müssen, können jetzt auf Typ Ebene beschränkt werden
+' Datenhaltung: Command Query Seperation, dass eine Tabelle sich 1:1 zu einem objekt mappen soll ist problematisch. Also besser ist es wenn ich mich damit abfinde dass eine Tabelle unter Umständen auf mehreren Wegen abgefragt/geändert werden kann
+' Zugriffe können weniger als eine tabelle holen
+' Updates nur bestimmte Werte updaten
+' http://gorodinski.com/blog/2013/01/21/inverting-object-orientation-with-fsharp-discriminated-unions-and-pattern-matching/
 
 ---
 ### DDD und F#
 #### Model für eine Email/Telefonenummer/Kundennummer etc.
 
-' Single Case union bedeutet dass ich einen eignen Type für Emails reserviere.  Funktionen/Datenstrukture die eine Email brauchen, können dies jetzt mittels der Typdeklaration kundtun. Ich trenne so "normale" von Emails.  
+' Single Case union bedeutet dass ich einen eignen Type für Emails reserviere.
+' Funktionen/Datenstrukture die eine Email erfodern/zurückgeben, können dies jetzt mittels der Typdeklaration kundtun. 
+' Emails sind halt keine strings.
 
 *)
-    // single case union
-    type Email = Email of string
-    type PhoneNumber = PhoneNumber of string
-    type CustomerNumber = CustomerNumber of string
+    
+// single case union
+type Email = Email of string
+type Telefon = PhoneNumber of string
+type Kundennummer = CustomerNumber of string
 
 (**
 
 --- 
 ### DDD und F#
-#### Kontakt
+#### Zustände
 
-- Zusammenhängende Informationen als Primitives dargestellt
-- Daten die fehlen darf als option dargestellt
+- Zusammenhängende Informationen in Types zusammenfassen
+- Zustände mittels Typen darstellen
+
 
 *)
 
-    type Contact = {
-        FirstName:string
-        MiddleInitial:string
-        LastName:string
-        EmailAdresse:string
-        IsEmailVerified:bool
-        EmailVerificationToken:string }
+module DDD0 = 
+    open System
 
-    type Contact' = {
-        Name: PersonalName
-        Email:Email
-        IsEmailVerified:bool
-        EmailVerificationToken:string
-    }
+    type PersonenName = { Titel: string option; Vorname:string; Nachname:string; }
+
+    type Kontakt = { Name:PersonenName; Email:Email; EmailVerifiziert:bool; }
 
 (**
+
+' Kontakt hat eine Email Adresse angegeben, diese muss verifiziert werden.  Erst danach kann der Kontakt bestimmte Tätigkeiten ausüben
+' Beachte: EmailVerifiziert kann gesetzt werden, ODER ich muss in meinem Code dies kontrollieren
+
+--- 
+### DDD und F#
+#### Zustände
+
+*)
+
+    type EmailVerificationToken = EmailVerificationToken of string
+
+    type VerifyEmail = Email -> EmailVerificationToken -> bool
+
+    let ``Funktion gilt nur für verifizierte`` kontakt = 
+        if kontakt.EmailVerifiziert then
+            "???"
+        else
+            "Ja das darf der Kotakt"
+
+(**
+
+' Zeigen. Type Inference funktioniert wirklich: Kontakt wird erkannt, kein Rückgabetyp da dieser auch vom Compiler erkannt wurde (kontakt:Kontakt -> string)
+' VerifyEmail gibt mir einen bool zurück, ich muss jetzt darauf handeln und die Behandlung der Verifizierung (das Bool) übernehmen, neben der tatsächlichen email Adresse
+' Solches code muss jetzt immer verwendet werden um zu prüfen ob die Email eines Kontakts verifiziert ist
 
 ---
 ### DDD und F#
 #### Model für eine verifizierte Email
 
-- Wenn ein neuer Kunde eine Email eingibt, dann muss diese oft erst verifiziert werden
-- Bis zu dieser Verifizierung, handelt es sich um eine nicht verifizierte Email
-- Erst nach der Verifizierung, wird daraus eine verfizierte Email (der Beweis ist ein Token)
-- Die beiden Zustände einer Email als DU modelieren
+' Wenn ein neuer Kunde eine Email eingibt, dann muss diese oft erst verifiziert werden
+' Bis zu dieser Verifizierung, handelt es sich um eine nicht verifizierte Email
+' Erst nach der Verifizierung, wird daraus eine verfizierte Email (der Beweis ist ein Token)
+' Die beiden Zustände einer Email als DU modelieren
 
 *)
-    type EmailVerificationToken = EmailVerificationToken of string
+    type VerifizierteEmail = { Email:Email; Verifikation: EmailVerificationToken; }
 
-    type EmailContactInfo = 
-        | Unverified of Email
-        | Verified of Email:Email * VerificationToken : EmailVerificationToken
+    type VerifyEmail' = Email -> EmailVerificationToken -> VerifizierteEmail option
 
 (**
+
+' Der neue Typ soll nur dann erstellt werden wenn die Verifikation erfolgt ist.  Die Funktion VerifyEmail' könnte ich z.B. mittels F# Scope Regeln so erstellen dass diese als einziges Gateway vorhanden ist um an das Typ VerifizierteEmail zu erzeugen
 
 --- 
 ### DDD und F#
@@ -763,12 +802,53 @@ module DDD1 =
 
 *)
 
-    type Contact'' = {
-        Name: PersonalName
-        EmailContactInfo:EmailContactInfo
-    }
+    type UnverifizierterKontakt = { Name: PersonenName; Email:Email; }
+
+    type VerifizierterKontakt = { Name: PersonenName; Email:VerifizierteEmail; }
+
+    type Kontakt' = 
+        | UnverifizierterKontakt of UnverifizierterKontakt
+        | VerifizierterKontakt of VerifizierterKontakt
+
+    let ``Funktion gilt nur für verifizierte ohne Prüfung`` verifizierterKontakt = 
+        verifizierterKontakt.Email.Email
+
+(**
+
+---
+### DDD und F#
+#### Model für einen Kunden mit Adressen
 
 
+
+
+' Das Pattern matching schränkt die Auswahl auf konkrete Typen und nicht mehr auf das abfragen von einzelnen Werten
+' In OO wäre hier jetzt eine Implementierung des Visitor Pattern notwendig
+' http://www.dofactory.com/net/visitor-design-pattern
+' Je mehr Fälle man hat desto komplizierter wird das ganze
+
+*)
+
+    type Strasse = Strasse of string
+    type PLZ = PLZ of string
+    type Land = Land of string
+
+    type PostAnschrift = { Strasse:Strasse; PLZ:PLZ; Land:Land; }
+
+    type KontactInfo = 
+        | VerifizierteEmail of VerifizierteEmail
+        | PostAnschrift of PostAnschrift
+
+
+    type Kontakt'' = 
+        | UnverifizierterKontakt of UnverifizierterKontakt
+        | VerifizierterKontakt of KontactInfo
+
+(**
+
+' Das gleiche Spiel mit der Verifikation kann ich jetzt auch mit der postalen Anschrift machen
+
+*)
 
 
 
