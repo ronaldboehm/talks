@@ -48,7 +48,7 @@ let tripleIntTuple = 1,2,3
 ---
 ### Tuple: Komposition
 
-Aus einfachen Typen lassen sich komplexere erstellen
+Aus Primitives/einfachen Typen lassen sich komplexere erstellen
 
 *)
 
@@ -62,7 +62,7 @@ let komposition  = intStringTuple,complex
 
 ---
 ### Tuple: Deconstruction
-Ein Tuple kann in seinen Bestandteilen zerlegt werden
+Ein Tuple in seinen Bestandteilen zerlegen
 
 ' In F# ist es üblich Varianten von einem Wert mittels '' zu kennzeichnen
 ' Klammern sind nicht notwendig, dienen der Abgrenzung und Klarheit
@@ -231,10 +231,11 @@ Record in seinen Bestandteilen zerlegen
 
 let { Real = real;  Imaginary = imaginary; } = complexNumber // Alle Member
 let { Real = real'; } = complexNumber' // Einzelne
+let real'' = complexNumber'.Real // Point Style ist auch möglich für einen Wert
 
 (** <div style="display: none" > *)
 (*** define-output:Record-Deconstruction ***)
-printf "real = %f | imaginary = %f | real' = %f" real imaginary real'
+printf "real = %f | imaginary = %f | real' = %f | real'' = %f" real imaginary real' real''
 (** </div> *)
 
 (*** include-output: Record-Deconstruction ***)
@@ -251,8 +252,8 @@ let complexNumber'' = { complexNumber' with Imaginary = 3.0 }
 
 (** <div style="display: none" > *)
 (*** define-output:Record-Clone ***)
-let { Real = real''; Imaginary = imaginary''; } = complexNumber''
-printf "real = %f | imaginary = %f" real'' imaginary'' 
+let { Real = real'''; Imaginary = imaginary''; } = complexNumber''
+printf "real = %f | imaginary = %f" real''' imaginary'' 
 (** </div> *)
 
 (*** include-output: Record-Clone ***)
@@ -340,7 +341,7 @@ type DuBeispiel =
 (**
 
 ---
-#### DU: Construction
+### DU: Construction
 
 Für jeden Union Case gibt es eine Constructor Funktion
 
@@ -399,7 +400,7 @@ printf "Viereckfläche = %f" viereckFlaeche
 - Höhengrad und Breitengrad sind beide floats
 - Beide werte jedoch stellen einen anderen Domain dar
 
-' In DDD (Domain Driven Design) spielen diese oft eine wichtige Rolle.  
+' In DDD (Domain Driven Design) spielen diese oft eine wichtige Rolle.
 ' Z.B. kann ich dadurch Primitives so definieren dass diese untereinander nicht „kompatibel“ sind, auch wenn diese vom gleichen Typ sind.
 
 *)
@@ -548,7 +549,7 @@ let none = Option<string>.None
 - Option verfügt in F# über viele Hilfsfunktionen 
 
 ***
-### DDD und F#
+### DDD und FP
 #### Was bis her geschah
 
 - Design Prozesse gehen von einer Dreiteilung
@@ -556,43 +557,66 @@ let none = Option<string>.None
     - Modellierer erstellen Design Dokumente in einem Zwischenformat (z.B. UML)
     - Programmierer erstellen Code anhand der Design Dokumente
 
+---
+### DDD und FP
+#### Was bis her geschah
+
 - Konsequenzen
     - Programmierer reden nicht mit Fachleute
     - Roundtrip Engineering notwendig um Code und Design Dokumente auf einem Stand zu halten
     - Code kann nicht so dargestellt werden dass Fachleute es einsehen können
     
 ' Ohne dass sie kotzen
+
     
 ---
-### DDD und F#
+### DDD und FP
 #### Die Hoffnung
 
 - Design Dokumente die verifizierbar sind
     - Verifizierbar durch einsehen
     - Verifizierbar durch eine Maschine (Compiler)
 
+>"A good static type system is like having compile-time unit tests" (S. Wlaschin)
+
+---
+### DDD und FP
+#### Die Hoffnung
+
 - Code als Design Dokument
     - Das Code ist das Model: Keine Zwischenformate
-    - Datenstrukturen und Verhalten 
+    - Datenstrukturen und Verhalten (zum Teil) durch Datenstrukturen darstellen
     - Einbetten von Domainlogik in den Datenstrukturen
-    - "Making illegal states unrepresentable" (Y. Minsky)
 
-' In FP sind sowohl Datenstrukturen (Tuple, Record, DU) als Verhalten (Function) Types.  Ich kann beides gleichermaßen definieren
-  
+>"Making illegal states unrepresentable" (Y. Minsky)
+
+' - Die Fachleute können ihre Dokumente schreiben in den Formaten mit denen sie vertraut sind, die DEVs können Code schreiben
+' - In FP sind sowohl Datenstrukturen (Tuple, Record, DU) als Verhalten (Function) Types: Composition.
+' - Domainlogik legt Regeln fest die Definition (Vorname required) und Transformation Einkaufskorb -> Bestellung festlegen. Types erlauben diese Regeln zum Teil darzustellen, der Rest muss dann mit Controlflow Construkte erstellt werden
+' - MISU!!! Vielleicht hier einen Diagram malen um das Vorgehen in OO und in FP darzustellen: Offener Raum, nachträgliches Einschränken.  Geschlossener Raum, Quadrat für Quadrat gebaut, nur legale Zustände werden dargestellt
+
 ---
 ### DDD und F#
 #### Vorteile des F# Typ System
 
-- Komposition wird durch das Typ System begünstigt
+- Typ System begünstigt Komposition<!-- .element: class="fragment grow" -->
 - DU erlauben eine kompakte Darstellung von Zuständen
-- Light-weight Typen durch geringe Anzahl der Zeilen, Keine Sonderzeichen. 
-- Exhaustivness hilft bei der Korrektheit: Fehlende Fälle werden vom Compiler erfasst
-- "A good static type system is like having compile-time unit tests" (S. Wlaschin)
+
+' - In C# oder in Java, ist die Hemmschwelle relativ hoch neue Types zu erstellen. Es gibt sogar das code smell "Primitive Obsession", kein Scherz
+' - Komposition erlaubt es einfache Typen zu immer komplexeren zusammenzufassen.  Es ist erstaunlich wie viel dann auf einer Seite passt
+' - Macht Nicht Programmierern weniger Angst
+' - Bei Programmierung von Fachanwendungen, geht es oft darum dass ein Objekt mehrere Zustände haben kann.  Jedes Zustand hat wiederum eigne Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
+
+---
+### DDD und F#
+#### Vorteile des F# Typ System
+
+- Light-weight Typen: geringe Anzahl der Zeilen, Keine Sonderzeichen
+- Exhaustivness führt zur Korrektheit: Fehlende Fälle werden vom Compiler erfasst
 
 
-' In C# oder in Java, ist die Hemmschwelle relativ hoch neue Types zu erstellen.
-' Komposition erlaubt es einfachen Typen zu immer komplexeren zusammenzufassen.  Es ist erstaunlich wie viel dann auf einer Seite passt
-' Macht Nicht Programmierern weniger Angst
+' - Die geringe Zahl von Sonderzeichen/Schlüsselwörtern macht Nicht Programmierern weniger Angst
+' - Bei Programmierung von Fachanwendungen, geht es oft darum dass ein Objekt mehrere Zustände haben kann.  Jedes Zustand hat wiederum eigne Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
 
 --- 
 ### DDD und F#
@@ -603,37 +627,53 @@ let none = Option<string>.None
 
 --- 
 ### DDD und F#
+#### Intern ODER extern
+*)
+
+type Abteilung = { Name:string; Beschreibung:string; }
+type Kunde = { Id:int; Name:string; }
+
+type Person' = { Id:int; Vorname:string; Nachname:string; Abteilung: Abteilung option; Kunde: Kunde option; }
+
+(**
+' Theoretisch, hindert mich nichts daran sowohl Department und Customer leer zu lassen.  Ich muss aktiv über mein Code eingreifen um zu sichern dass mindestens eines der beiden belegt ist
+' Nachnamen und Vornamen sind häufig gemeinsam anzutreffen, die Beiden werden meistens als einheit betrachtet
+' Notfalls muss eine ReadOnly Property erstellen um herauszufinden dass eine Person intern oder extern ist
+' Diese Property muss immer z.B. aufgerufen werden um sich zu vergewissern 
+
+--- 
+### DDD und F#
 #### Komposition
 
-- FP Typen machen Komposition einfach
+- Komposition 
 - DUs erlauben eine "geschlossene" Auswahl
 
 *)
 
-type PersonalName = { FirstName:string; LastName:string; }
-type Person = { Id:int; Name:PersonalName }
-type Department = { Name:string; Description:string; }
-type Customer = { Id:int; Name:string; }
+type PersonenName = { Vorname:string; Nachname:string; }
+//type Person = { Id:int; Name:PersonalName }
 
-type PersonInOurDb = 
-    | Employee of Person:Person * Department: Department
-    | External of Person:Person * Customer:Customer
+type Person = 
+    | Angestellter of Id:int * Name:PersonenName * Department: Abteilung
+    | Externer of Id:int * Name:PersonenName * Customer:Kunde
 
 (**
+
+' Wenn ich ab jetzt nur noch mit 
 
 ---
 ### DDD und F#
 - Model für einen Namen
 
 ' In OO wäre es möglich dass MiddleName ein null wäre. Das ist zulässig und idiomatisch.
-' Aber wir wir gesehen haben, wäre es auch möglich Length gegen einen null pointer vom Type String zu verwenden
-' dies kann ich verhindern in dem ich die Option nutze
+' Aber wie wir gesehen haben, wäre es auch möglich Length gegen einen null pointer vom Type String zu verwenden
+' dies kann ich verhindern in dem ich die Option nutze, hier muss der String angegeben werden (wenn auch Empty auch möglich wäre)
 
 *)
 
 module DDD0 = 
 
-    type PersonalName = 
+    type PersonenName = 
         { 
             FirstName:string; // Muss
             MiddleName:string; // Kann
