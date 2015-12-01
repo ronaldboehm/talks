@@ -726,7 +726,6 @@ type Person' =
 ' Emails sind halt keine strings.
 
 *)
-    
 // single case union
 type Email = Email of string
 type Telefon = PhoneNumber of string
@@ -849,6 +848,7 @@ module DDD0 =
 ' Das gleiche Spiel mit der Verifikation kann ich jetzt auch mit der postalen Anschrift machen
 
 *)
+
 
 
 
