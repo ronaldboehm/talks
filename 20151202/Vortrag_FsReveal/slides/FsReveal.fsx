@@ -89,7 +89,7 @@ printf "k' = %A | k'' = %A" k' k''
 ---
 ### Tuple: Strukturelle Gleichheit
 
-- Typ und Reihnfolge: sind Zwei Werte vergelichbar?
+- Typ und Reihnfolge: sind zwei Werte vergleichbar?
 - Werte: sind zwei Werte gleich?
 
 *)
@@ -103,7 +103,7 @@ printf "Gleich = %b" equal
 (*** include-output: Type-Equality ***)
 
 (**
-' Typ Definition ist hilfreich bei Signaturen
+' Typdefinition ist hilfreich bei Signaturen
 
 ---
 ### Tuple: Pattern Matching
@@ -130,17 +130,17 @@ printf "result'' = %A " result''
 
 (**
 
-' Fehlnde Fälle werden vom Compiler festgestellt und angezeigt
+' Fehlende Fälle werden vom Compiler festgestellt und angezeigt
 
 ---
-### Tuple: Nutzung in der .net API
+### Tuple: Nutzung in der .NET API
 
-TryParse Methoden die zwei Werte zurückgeben
+TryParse Methoden, die zwei Werte zurückgeben
 
 - bool: War das Parsen erfolgreich?
 - Wert: falls das Parsen erfolgreich war
 
-' _ ist ein Platzhalter für egal welches Wert erscheint, bitte nicht evaluieren
+' _ ist ein Platzhalter für egal welcher Wert erscheint, bitte nicht evaluieren
 
 *)
 
@@ -174,7 +174,7 @@ Eine bennante Menge von benannten Elementen
 - Die Reihenfolge der Deklaration ist nicht relevant
 - Ist kein ad-hoc Typ
 
-' Wichitg: es ist auch nur ein Tuple, ein multiplication type
+' Wichtig: es ist auch nur ein Tuple, ein multiplication type
 
 
 ---
@@ -208,7 +208,7 @@ let complexNumber' = { ComplexNumber.Real = 2.0; Imaginary = 2.0; }
 let hamburg'       = { GeoCoord.Lat = 53.553260805869805; Long = 9.993009567260742; }
 
 (**
-' Dies ist dann besonders hilfreich wenn Typen die gleichen Bezeichner verwenden
+' Dies ist dann besonders hilfreich, wenn Typen die gleichen Bezeichner verwenden
 
 ---
 ### Record: Construction
@@ -221,11 +221,11 @@ Keine halben Sachen:
 // let complexNumber' = { ComplexNumber.Real = 1.0; } // Imaginary gebe ich später an
 (**
 
-' Funktionales Vorgehen: Wenn ich feststelle dass ich den Fall konkret habe dass ein Wert nicht immer angegeben werden kann, dann erstelle ich hierfür einen Typ
+' Funktionales Vorgehen: Wenn ich feststelle, dass ich den Fall konkret habe, dass ein Wert nicht immer angegeben werden kann, dann erstelle ich hierfür einen Typ
 
 ---
 ### Record: Deconstruction
-Record in seinen Bestandteilen zerlegen
+Record in seine Bestandteile zerlegen
 
 *)
 
@@ -244,7 +244,7 @@ printf "real = %f | imaginary = %f | real' = %f | real'' = %f" real imaginary re
 
 ---
 ### Record: Clone With
-Da modifizieren nicht geht, bietet F# verinfachtes Klonen an
+Da Modifizieren nicht geht, bietet F# vereinfachtes Klonen an
 
 *)
 
@@ -260,15 +260,15 @@ printf "real = %f | imaginary = %f" real''' imaginary''
 
 (**
 
-'  Dies ist notwendig für den üblichen Fall dass sich nicht alle Werte geändert haben sondern nur bestimmte.  Mit der With Syntax kann ich diesen Fall gut abdecken
+'  Dies ist notwendig für den üblichen Fall, dass sich nicht alle Werte geändert haben, sondern nur bestimmte.  Mit der With Syntax kann ich diesen Fall gut abdecken
 
 ---
 ### Record: Strukturelle Gleichheit
 
-Zwei Record Werte sind gleich wenn beide 
+Zwei Record Werte sind gleich  
 
-- Vom Gleichen Typ sind
-- Alle korrespondierende Bezeichner haben die gleichen Werte
+- wenn beide vom gleichen Typ sind
+- alle korrespondierende Bezeichnerdie gleichen Werte haben 
 
 ' ACHTUNG: Wenn zwei unterschiedliche Record Typen (unterschiedlilch bennante) die gleichen Bezeichner haben, sind beide trotzdem nicht über strukturelle Gleichheit vergleichbar.  In anderen funktionalen Sprachen wird die Gleicheit anders gehandhabt
 
@@ -308,7 +308,7 @@ printf "r''' = %s " r'''
 - Unterscheidungs-Union auf deutsch
 - Besteht aus einer Anzahl von benannten Fällen
 - Ein benannter Fall kann aus einer Anzahl von Werten bestehen
-- Nur eines der bennanten Fällt ist gültig für einen Ausdruck
+- Nur einer der benannten Fälle ist gültig für einen Ausdruck
 - Mit Bezeichnern oder ohne
 
 *)
@@ -357,12 +357,12 @@ let kreis = Kreis (1.0)
 ---
 ### DU: Deconstruction & Pattern Matching
 
-- viereck im Beispiel hatte den Type Figur, nicht Figur.Viereck!
-- Ich kann von außen nicht wissen welche union case ein DU-Wert darstellt
+- Viereck im Beispiel hatte den Type Figur, nicht Figur.Viereck!
+- Ich kann von außen nicht wissen, welchen union case ein DU-Wert darstellt
 - Nur Pattern Matching erlaubt es mir dies zu erfahren
 - Deconstruction *muss* für *alle* Fälle erfolgen (Exhaustivness)
 
-' Wenn ich einen DU anspreche dann entweder um eine Transforation zu erhalten (Fläche Ermitteln) oder um 
+' Wenn ich einen DU anspreche dann entweder um eine Transforation zu erhalten (Fläche ermitteln) oder um 
 
 ---
 ### DU: Deconstruction & Pattern Matching
@@ -392,7 +392,7 @@ printf "Viereckfläche = %f" viereckFlaeche
 ### DU: Nutzung
 
 - DU für die Darstellung von Zuständen/Übergängen
-- Alle Fälle abdecken zu müssen führt zu wengier Fehlerfälle
+- Alle Fälle abdecken zu müssen führt zu weniger Fehlerfällen
 - Schnell erstellt!
 
 ---
@@ -400,10 +400,10 @@ printf "Viereckfläche = %f" viereckFlaeche
 
 - Primitives haben oft besondere Bedeutung
 - Höhengrad und Breitengrad sind beide floats
-- Beide werte jedoch stellen einen anderen Domain dar
+- Beide Werte jedoch stellen ein anderes Konzept dar
 
 ' In DDD (Domain Driven Design) spielen diese oft eine wichtige Rolle.
-' Z.B. kann ich dadurch Primitives so definieren dass diese untereinander nicht „kompatibel“ sind, auch wenn diese vom gleichen Typ sind.
+' Z.B. kann ich dadurch Primitives so definieren, dass diese untereinander nicht „kompatibel“ sind, auch wenn diese vom gleichen Typ sind.
 
 *)
 
@@ -447,12 +447,12 @@ let s = Some "string"
 
 (**
 
-- Achtung: None wird nicht via Construction erstellt, sondern nur als Rückgabe Wert verwendet
+- Achtung: None wird nicht via Construction erstellt, sondern nur als Rückgabewert verwendet
 
 ---
 ### Option: Deconstruction und Pattern Matching
 
-- Alle Fälle müssen behandelt werden damit ich den Wert des Option extrahieren kann
+- Alle Fälle müssen behandelt werden, damit ich den Wert des Option extrahieren kann
 
 *)
 
@@ -470,7 +470,7 @@ let z' = optionMatch Option<string>.None
 ---
 ### Option: Deconstruction und Pattern Matching
 - Option ist meistens das Ergebnis einer Auswertung
-- None stellt den Fall dar dass kein sinnvolles Ergebnis vorhanden ist
+- None stellt den Fall dar, dass kein sinnvolles Ergebnis vorhanden ist
 
 *)
 
@@ -497,18 +497,18 @@ printf "x = %A | x' = %A" x x'
 
 - Null vs Unbekannt/Fehlend
 - Durch Option ist es möglich fehlende Werte explizit zu kennzeichnen
-- Die Kennzeichnung erfolgt durch einen eignen Typ
+- Die Kennzeichnung erfolgt durch einen eigenen Typ
 - Zugriffe auf fehlende Werte sind dann compile-time und keine run-time Fehler
 
-' Referenzen auf nicht vorhandene Objekte sind nicht die beste Artundweise 
+' Referenzen auf nicht vorhandene Objekte sind nicht die beste Art und Weise 
 
 
 ---
 
 ### Option vs null: Type Safety
 
-- null ist eine Reference zu einem Objekt das nicht existiert
-- Das Typsystem kann uns dabei nicht helfen zu erkennen dass die Variable diesen Wert hat
+- null ist eine Reference zu einem Objekt, das nicht existiert
+- Das Typsystem kann uns dabei nicht helfen zu erkennen, dass die Variable diesen Wert hat
 - Ich kann .Length auf einen Reference null aufrufen
 
 ' Danke Scott Wlaschin!
@@ -525,7 +525,7 @@ printf "x = %A | x' = %A" x x'
         {
             string s2 = null;
             var len2 = s2.Length; 
-            // WIR wissen dass s2 null ist, der Compiler nicht
+            // WIR wissen, dass s2 null ist, der Compiler nicht
         }
     }
 
@@ -552,21 +552,21 @@ let none = Option<string>.None
 
 ***
 ### DDD und FP
-#### Was bis her geschah
+#### Was bisher geschah
 
-- Design Prozesse gehen von einer Dreiteilung
+- Design-Prozesse gehen von einer Dreiteilung aus
     - Fachleute mit Fachwissen
-    - Modellierer erstellen Design Dokumente in einem Zwischenformat (z.B. UML)
-    - Programmierer erstellen Code anhand der Design Dokumente
+    - Modellierer erstellen Design-Dokumente in einem Zwischenformat (z.B. UML)
+    - Programmierer erstellen Code anhand der Design-Dokumente
 
 ---
 ### DDD und FP
-#### Was bis her geschah
+#### Was bisher geschah
 
 - Konsequenzen
-    - Programmierer reden nicht mit Fachleute
+    - Programmierer reden nicht mit Fachleuten
     - Roundtrip Engineering notwendig um Code und Design Dokumente auf einem Stand zu halten
-    - Code kann nicht so dargestellt werden dass Fachleute es einsehen können
+    - Code kann nicht so dargestellt werden, dass Fachleute es einsehen können
     
 ' Ohne dass sie kotzen
 
@@ -575,8 +575,8 @@ let none = Option<string>.None
 ### DDD und FP
 #### Die Hoffnung
 
-- Design Dokumente die verifizierbar sind
-    - Verifizierbar durch einsehen
+- Design-Dokumente, die verifizierbar sind
+    - Verifizierbar durch Einsehen
     - Verifizierbar durch eine Maschine (Compiler)
 
 >"A good static type system is like having compile-time unit tests" (S. Wlaschin)
@@ -585,14 +585,14 @@ let none = Option<string>.None
 ### DDD und FP
 #### Die Hoffnung
 
-- Code als Design Dokument
+- Code als Design-Dokument
     - Das Code ist das Model: Keine Zwischenformate
     - Datenstrukturen und Verhalten (zum Teil) durch Datenstrukturen darstellen
     - Einbetten von Domainlogik in den Datenstrukturen
 
 >"Making illegal states unrepresentable" (Y. Minsky)
 
-' - Die Fachleute können ihre Dokumente schreiben in den Formaten mit denen sie vertraut sind, die DEVs können Code schreiben
+' - Die Fachleute können ihre Dokumente schreiben in den Formaten, mit denen sie vertraut sind, die DEVs können Code schreiben
 ' - In FP sind sowohl Datenstrukturen (Tuple, Record, DU) als Verhalten (Function) Types: Composition.
 ' - Domainlogik legt Regeln fest die Definition (Vorname required) und Transformation Einkaufskorb -> Bestellung festlegen. Types erlauben diese Regeln zum Teil darzustellen, der Rest muss dann mit Controlflow Construkte erstellt werden
 ' - MISU!!! Vielleicht hier einen Diagram malen um das Vorgehen in OO und in FP darzustellen: Offener Raum, nachträgliches Einschränken.  Geschlossener Raum, Quadrat für Quadrat gebaut, nur legale Zustände werden dargestellt
@@ -604,10 +604,10 @@ let none = Option<string>.None
 - Typ System begünstigt Komposition<!-- .element: class="fragment grow" -->
 - DU erlauben eine kompakte Darstellung von Zuständen
 
-' - In C# oder in Java, ist die Hemmschwelle relativ hoch neue Types zu erstellen. Es gibt sogar das code smell "Primitive Obsession", kein Scherz
-' - Komposition erlaubt es einfache Typen zu immer komplexeren zusammenzufassen.  Es ist erstaunlich wie viel dann auf einer Seite passt
-' - Macht Nicht Programmierern weniger Angst
-' - Bei Programmierung von Fachanwendungen, geht es oft darum dass ein Objekt mehrere Zustände haben kann.  Jedes Zustand hat wiederum eigne Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
+' - In C# oder in Java ist die Hemmschwelle relativ hoch neue Types zu erstellen. Es gibt sogar das code smell "Primitive Obsession", kein Scherz
+' - Komposition erlaubt es einfache Typen zu immer komplexeren zusammenzufassen.  Es ist erstaunlich wie viel dann auf eine Seite passt
+' - Macht Nicht-Programmierern weniger Angst
+' - Bei Programmierung von Fachanwendungen geht es oft darum, dass ein Objekt mehrere Zustände haben kann. Jeder Zustand hat wiederum eigene Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
 
 ---
 ### DDD und F#
@@ -617,9 +617,9 @@ let none = Option<string>.None
 - Exhaustivness führt zur Korrektheit
 
 
-' - Die geringe Zahl von Sonderzeichen/Schlüsselwörtern macht Nicht Programmierern weniger Angst
+' - Die geringe Zahl von Sonderzeichen/Schlüsselwörtern macht Nicht-Programmierern weniger Angst
 ' PUNKT 2: Fehlende Fälle werden vom Compiler erfasst
-' - Bei Programmierung von Fachanwendungen, geht es oft darum dass ein Objekt mehrere Zustände haben kann.  Jedes Zustand hat wiederum eigne Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
+' - Bei Programmierung von Fachanwendungen, geht es oft darum, dass ein Objekt mehrere Zustände haben kann. Jeder Zustand hat wiederum eigene Operationen, Fähigkeiten. DU erlauben diese sehr gut darzustellen
 
 --- 
 ### DDD und F#
@@ -715,8 +715,8 @@ type Person' =
 ' - string option hingegen erlaubt den Verzicht auf null, bei Einhaltung der 
 ' Bedenken: Ich habe weiterhin nur einen Typ für Person, keine zwei.  Nur bei jedem Zugriff auf Person, muss ich jetzt beide Fälle explizit berücksichtigen
 ' Operationen die nur vom Angestellten/Externen ausgeführt werden müssen, können jetzt auf Typ Ebene beschränkt werden
-' Datenhaltung: Command Query Seperation, dass eine Tabelle sich 1:1 zu einem objekt mappen soll ist problematisch. Also besser ist es wenn ich mich damit abfinde dass eine Tabelle unter Umständen auf mehreren Wegen abgefragt/geändert werden kann
-' Zugriffe können weniger als eine tabelle holen
+' Datenhaltung: Command Query Seperation, dass eine Tabelle sich 1:1 zu einem Objekt mappen soll ist problematisch. Also besser ist es, wenn ich mich damit abfinde, dass eine Tabelle unter Umständen auf mehreren Wegen abgefragt/geändert werden kann
+' Zugriffe können weniger als eine Tabelle holen
 ' Updates nur bestimmte Werte updaten
 ' http://gorodinski.com/blog/2013/01/21/inverting-object-orientation-with-fsharp-discriminated-unions-and-pattern-matching/
 
@@ -724,8 +724,8 @@ type Person' =
 ### DDD und F#
 #### Model für eine Email/Telefonenummer/Kundennummer etc.
 
-' Single Case union bedeutet dass ich einen eignen Type für Emails reserviere.
-' Funktionen/Datenstrukture die eine Email erfodern/zurückgeben, können dies jetzt mittels der Typdeklaration kundtun. 
+' Single Case union bedeutet, dass ich einen eignen Type für Emails reserviere.
+' Funktionen/Datenstrukturen, die eine Email erfordern/zurückgeben, können dies jetzt mittels der Typdeklaration kundtun. 
 ' Emails sind halt keine strings.
 
 *)
@@ -786,9 +786,9 @@ module DDD0 =
 #### Model für eine verifizierte Email
 
 ' Wenn ein neuer Kunde eine Email eingibt, dann muss diese oft erst verifiziert werden
-' Bis zu dieser Verifizierung, handelt es sich um eine nicht verifizierte Email
-' Erst nach der Verifizierung, wird daraus eine verfizierte Email (der Beweis ist ein Token)
-' Die beiden Zustände einer Email als DU modelieren
+' Bis zu dieser Verifizierung handelt es sich um eine nicht verifizierte Email
+' Erst nach der Verifizierung wird daraus eine verfizierte Email (der Beweis ist ein Token)
+' Die beiden Zustände einer Email als DU modellieren
 
 *)
     type VerifizierteEmail = { Email:Email; Verifikation: EmailVerificationToken; }
@@ -823,10 +823,10 @@ module DDD0 =
 #### Model für einen Kunden mit Adressen
 
 
-' Das Pattern matching schränkt die Auswahl auf konkrete Typen und nicht mehr auf das abfragen von einzelnen Werten
+' Das Pattern matching schränkt die Auswahl auf konkrete Typen und nicht mehr auf das Abfragen von einzelnen Werten
 ' In OO wäre hier jetzt eine Implementierung des Visitor Pattern notwendig
 ' http://www.dofactory.com/net/visitor-design-pattern
-' Je mehr Fälle man hat desto komplizierter wird das ganze
+' Je mehr Fälle man hat, desto komplizierter wird das Ganze
 
 *)
 
